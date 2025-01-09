@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тест с категориями</title>
+  <script>
+    // Генерация данных для 700 категорий, подкатегорий и подподкатегорий
+    const data = {};
+    for (let i = 1; i <= 700; i++) {
+      const categoryName = `Категория ${i}`;
+      data[categoryName] = {};
+      for (let j = 1; j <= 5; j++) { // 5 подкатегорий на категорию
+        const subCategoryName = `Подкатегория ${i}.${j}`;
+        data[categoryName][subCategoryName] = [];
+        for (let k = 1; k <= 3; k++) { // 3 подподкатегории на подкатегорию
+          data[categoryName][subCategoryName].push(`Подподкатегория ${i}.${j}.${k}`);
+        }
+      }
+    }
+
+    // Единая функция для обновления выпадающих списков
+    function updateDropdowns(level, parentValue) {
+      const nextDropdown = document.getElementById(level);
+      nextDropdown.innerHTML = "<option>Выберите</option>";
+
+      if (level === "subcategory" && data[parentValue]) {
+        Object.keys(data[parentValue]).forEach(subcat => {
+          const option = document.createElement("option");
+          option.value = subcat;
+          option.textContent = subcat;
+          nextDropdown.appendChild(option);
+        });
+      } else if (level === "additionalCategory") {
+        const category = document.getElementById("category").value;
+        if (data[category] && data[category][parentValue]) {
+          data[category][parentValue].forEach(subsubcat => {
+            const option = document.createElement("option");
+            option.value = subsubcat;
+            option.textContent = subsubcat;
+            nextDropdown.appendChild(option);
+          });
+        }
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>Тест с категориями</h1>
+  <form>
+    <p><strong>Вопрос 1:</strong> Клиент позвонил с жалобой, что во дворе нет лавочки. Какой категории, подкатегории и подподкатегории относится обращение?</p>
+    
+    <label for="category">Категория:</label>
+    <select id="category" onchange="updateDropdowns('subcategory', this.value)">
+      <option>Выберите</option>
+      <!-- Динамическое заполнение списка -->
+      <script>
+        Object.keys(data).forEach(cat => {
+          const option = document.createElement("option");
+          option.value = cat;
+          option.textContent = cat;
+          document.getElementById("category").appendChild(option);
+        });
+      </script>
+    </select>
+    <br><br>
+    
+    <label for="subcategory">Подкатегория:</label>
+    <select id="subcategory" onchange="updateDropdowns('additionalCategory', this.value)">
+      <option>Выберите</option>
+    </select>
+    <br><br>
+    
+    <label for="additionalCategory">Подподкатегория:</label>
+    <select id="additionalCategory">
+      <option>Выберите</option>
+    </select>
+    <br><br>
+    
+    <button type="submit">Отправить ответы</button>
+  </form>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.6;
+    }
+    h1 {
+      color: #333;
+    }
+    select, button {
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    button {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+  
+</body>
+</html>
